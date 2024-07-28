@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+
+
+import rospy
+from sensor_msgs.msg import LaserScan
+from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
+from math import atan2, fabs
+import random
+
+DEG2RAD = 3.14159265359 / 180.0
+RAD2DEG = 180.0 / 3.14159265359
+
+CENTER = 0
+LEFT = 1
+RIGHT = 2
+
+LINEAR_VELOCITY = 0.25
+ANGULAR_VELOCITY = 1.1
+
+
+GET_TB3_DIRECTION = 0
+TB3_DRIVE_FORWARD = 1
+TB3_RIGHT_TURN = 2
+TB3_LEFT_TURN = 3
+TB3_180_TURN = 4
+
+class Turtlebot3Drive:
+    def __init__(self):
+        rospy.init_node('turtlebot3_exp')
+
+        # Default topic name if not specified
+        self.cmd_vel_topic_name = "/cmd_vel"
+
+        # Variables
+        self.turtlebot3_state_num = GET_TB3_DIRECTION
+        self.escape_range = 20.0 * DEG2RAD
+        self.escape_range_180 = 55.0 * DEG2RAD
+        self.check_forward_dist = 0.4
+        self.check_side_dist = 0.5
+
+        self.scan_data = [3.5, 3.5, 3.5]
+
+        self.tb3_pose = 0.0
+        self.prev_tb3_pose = 0.0
+
+        # ROS Topic Publishers
+        self.cmd_vel_pub = rospy.Publisher(self.cmd_vel_topic_name, Twist, queue_size=10)
+
+        # ROS Topic Subscribers
+        self.laser_scan_sub = rospy.Subscriber('scan', LaserScan, self.laser_scan_callback)
+        self.odom_sub = rospy.Subscriber('odom', Odometry, self.odom_callback)
+        
+        # Ctrl+C shutdown
+        self.ctrl_c = False
+        rospy.on_shutdown(self.shutdownhook)
+
+        rospy.loginfo("The Turtlebot3Drive node has been initialized...")
+
+    def shutdownhook(self):
+        rospy.loginfo("Shutdown requested. Stopping the Turtlebot3Drive node...")
+        self.update_command_velocity(0.0, 0.0)
+        self.ctrl_c = True
+
+    def odom_callback(self, msg):
+        # Convert quaternion to Euler angles
+        orientation_q = msg.pose.pose.orientation
+        siny = 2.0 * (orientation_q.w * orientation_q.z + orientation_q.x * orientation_q.y)
+        cosy = 1.0 - 2.0 * (orientation_q.y * orientation_q.y + orientation_q.z * orientation_q.z)
+        self.tb3_pose = atan2(siny, cosy)
+
+    def laser_scan_callback(self, msg):
+        def angle_range(start, end):
+            if start < end:
+                return list(range(start, end + 1))
+            else:
+                return list(range(start, 360)) + list(range(0, end + 1))
+
+        scan_angle = [(345, 15), (25, 35) ,(325, 335)]
+        direction = ['center', 'left', 'right']
+        for num in range(3):
+            angle_range_list = angle_range(scan_angle[num][0], scan_angle[num][1])
+            scan_data = [msg.ranges[i % 360] for i in angle_range_list]
+            scan_data = [i if i != float('inf') and i != 0.0 else msg.range_max for i in scan_data]
+            self.scan_data[num] = min(scan_data)
+            print(f"{direction[num]} = {self.scan_data[num]}")
+
+    def update_command_velocity(self, linear, angular):
+        twist = Twist()
+        twist.linear.x = linear
+        twist.angular.z = angular
+        self.cmd_vel_pub.publish(twist)
+
+    def control_loop(self):
+        
+
+        if self.turtlebot3_state_num == GET_TB3_DIRECTION:
+            if self.scan_data[CENTER] > self.check_forward_dist:
+                if self.scan_data[LEFT] < self.check_side_dist and self.scan_data[RIGHT] < self.check_side_dist:
+                    self.prev_tb3_pose = self.tb3_pose
+                    self.turtlebot3_state_num = TB3_180_TURN
+                    print("180 turn")
+                
+                elif self.scan_data[LEFT] < self.check_side_dist:
+                    self.prev_tb3_pose = self.tb3_pose
+                    self.turtlebot3_state_num = TB3_RIGHT_TURN
+                    print("right turn")
+
+                elif self.scan_data[RIGHT] < self.check_side_dist:
+                    self.prev_tb3_pose = self.tb3_pose
+                    self.turtlebot3_state_num = TB3_LEFT_TURN
+                    print("left turn")
+                else:
+                    self.turtlebot3_state_num = TB3_DRIVE_FORWARD
+                    print("forward")
+
+            if self.scan_data[CENTER] < self.check_forward_dist:
+                if self.scan_data[LEFT] < self.check_side_dist and self.scan_data[RIGHT] < self.check_side_dist:
+                    self.prev_tb3_pose = self.tb3_pose
+                    self.turtlebot3_state_num = TB3_180_TURN
+                    print("180 turn 2")                
+                else:
+                    self.prev_tb3_pose = self.tb3_pose
+                    self.turtlebot3_state_num = TB3_RIGHT_TURN
+                    #turtlebot3_state_num =  random.choice([TB3_RIGHT_TURN, TB3_LEFT_TURN])
+                    print("less")
+
+        if self.turtlebot3_state_num == TB3_DRIVE_FORWARD:
+            self.update_command_velocity(LINEAR_VELOCITY, 0.0)
+            self.turtlebot3_state_num = GET_TB3_DIRECTION
+            print("Forward executed")
+        
+        elif self.turtlebot3_state_num == TB3_180_TURN:
+            if fabs(self.prev_tb3_pose - self.tb3_pose) >= self.escape_range_180:
+                print("180 turn finish")
+                self.turtlebot3_state_num = GET_TB3_DIRECTION
+            else:
+                print("180 turn executed")
+                self.update_command_velocity(0.0, -1 * ANGULAR_VELOCITY)        
+        
+        elif self.turtlebot3_state_num == TB3_RIGHT_TURN:
+            if fabs(self.prev_tb3_pose - self.tb3_pose) >= self.escape_range:
+                print("right turn finish")
+                self.turtlebot3_state_num = GET_TB3_DIRECTION
+            else:
+                print("right turn executed")
+                self.update_command_velocity(0.0, -1 * ANGULAR_VELOCITY)
+
+        elif self.turtlebot3_state_num == TB3_LEFT_TURN:
+            if fabs(self.prev_tb3_pose - self.tb3_pose) >= self.escape_range:
+                print("left turn finish")
+                self.turtlebot3_state_num = GET_TB3_DIRECTION
+            else:
+                print("left turn executed")
+                self.update_command_velocity(0.0, ANGULAR_VELOCITY)
+                
+
+if __name__ == '__main__':
+    try:
+        turtlebot3_drive = Turtlebot3Drive()
+        rate = rospy.Rate(10)
+        while not rospy.is_shutdown():
+            turtlebot3_drive.control_loop()
+            rate.sleep()
+    except rospy.ROSInterruptException:
+        pass
