@@ -72,19 +72,10 @@ We welcome contributions to improve this project. To contribute:
 4. Push to the branch (`git push origin feature/YourFeature`).
 5. Create a new Pull Request.
 
-Please ensure your code adheres to the project's coding standards and includes appropriate tests.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE). See the LICENSE file for details.
-
 ## Contact
 
 For any questions or support, please open an issue on the GitHub repository or contact the project maintainer:
 
 - [Ameer Alwadiya](https://github.com/ameer-alwadiya)
 
----
 
-Feel free to adjust the sections as needed and add more specific information related to your project.
-https://github.com/user-attachments/assets/9f56b626-cd74-424c-ac98-600b398f0414
