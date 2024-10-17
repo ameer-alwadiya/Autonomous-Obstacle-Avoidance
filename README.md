@@ -13,14 +13,6 @@ Welcome to the Autonomous Obstacle Avoidance project! This repository contains c
 
 To get started with this project, follow the instructions below:
 
-### Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- [Programming Language, e.g., Python 3.x]
-- [Required Libraries/Frameworks, e.g., NumPy, OpenCV]
-- [Hardware Dependencies, e.g., Raspberry Pi, Arduino]
-
 ### Installation
 
 1. **Clone the Repository:**
@@ -53,14 +45,6 @@ python main.py
 ```
 
 Ensure that all hardware components are connected and properly configured before running the system.
-
-## Documentation
-
-For detailed documentation on the system architecture, algorithms, and configuration, refer to the following:
-
-- [Algorithm Overview](docs/algorithm.md)
-- [Hardware Setup](docs/hardware.md)
-- [Configuration Guide](docs/configuration.md)
 
 ## Contributing
 
