@@ -56,10 +56,4 @@ We welcome contributions to improve this project. To contribute:
 4. Push to the branch (`git push origin feature/YourFeature`).
 5. Create a new Pull Request.
 
-## Contact
-
-For any questions or support, please open an issue on the GitHub repository or contact the project maintainer:
-
-- [Ameer Alwadiya](https://github.com/ameer-alwadiya)
-
 
