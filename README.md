@@ -4,7 +4,10 @@
 
 Welcome to the Autonomous Obstacle Avoidance project! This repository contains code and documentation for an autonomous system designed to navigate and avoid obstacles. The project aims to leverage various sensors and algorithms to achieve real-time obstacle detection and avoidance in robotic systems.
 
-https://github.com/user-attachments/assets/52a6abfc-fd9b-45b4-84a7-0dca646f4b53
+
+<div align="center">
+  [Video 1](https://github.com/user-attachments/assets/52a6abfc-fd9b-45b4-84a7-0dca646f4b53)
+</div>
 
 ## Features
 
