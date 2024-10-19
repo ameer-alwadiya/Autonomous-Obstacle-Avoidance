@@ -6,7 +6,9 @@ Welcome to the Autonomous Obstacle Avoidance project! This repository contains c
 
 
 
-  https://github.com/user-attachments/assets/52a6abfc-fd9b-45b4-84a7-0dca646f4b53
+<p align="center">
+  <img width="500" alt="Image description" src="https://github.com/user-attachments/assets/52a6abfc-fd9b-45b4-84a7-0dca646f4b53">
+</p>
 
 
 ## Features
