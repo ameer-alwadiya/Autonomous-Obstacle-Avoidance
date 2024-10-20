@@ -24,26 +24,13 @@ To get started with this project, follow the instructions below:
 
 ### Installation
 
-1. **Clone the Repository:**
+**Clone the Repository:**
 
    ```bash
    git clone https://github.com/ameer-alwadiya/Autonomous-Obstacle-Avoidance.git
    cd Autonomous-Obstacle-Avoidance
    ```
 
-2. **Install Dependencies:**
-
-   Create a virtual environment and install the required libraries:
-
-   ```bash
-   python -m venv env
-   source env/bin/activate  # On Windows use `env\Scripts\activate`
-   pip install -r requirements.txt
-   ```
-
-3. **Configure the System:**
-
-   Follow the configuration instructions in `config/README.md` to set up your system.
 
 ### Usage
 
@@ -55,14 +42,5 @@ python main.py
 
 Ensure that all hardware components are connected and properly configured before running the system.
 
-## Contributing
-
-We welcome contributions to improve this project. To contribute:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeature`).
-3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Create a new Pull Request.
 
 
