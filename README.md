@@ -15,7 +15,7 @@ This repository contains code and documentation for an autonomous system designe
 
 ## Features
 
-- Real-time obstacle detection using LDR sensor.
+- Real-time obstacle detection using LiDR sensor.
 - Advanced path planning and obstacle avoidance algorithms.
 
 ## Getting Started
